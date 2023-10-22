@@ -39,18 +39,44 @@ describe('Socket.io Server', () => {
     const client1 = require('socket.io-client')(`http://localhost:3000`);
     const client2 = require('socket.io-client')(`http://localhost:3000`);
 
-    client1.on('message', (message) => {
+    client1.on('broadcastMessage', (message) => {
       // Don't need to assert here; the other client's callback handles it
     });
 
-    client2.on('message', (message) => {
+    client2.on('broadcastMessage', (message) => {
       expect(message).toEqual('Hello everyone: Test message');
-      // client1.disconnect();
-      // client2.disconnect();
+      client1.disconnect();
+      client2.disconnect();
       done();
     });
 
     // Emit the "broadcast" event from one of the clients
     client1.emit('broadcast', 'Test message');
+  });
+
+  it(`should receive "message" event when "sendMessage" Event is emitted`, (done) => {
+    const client1 = require('socket.io-client')(`http://localhost:3000`);
+    const client2 = require('socket.io-client')(`http://localhost:3000`);
+    const testMsg = { username: 'user01', message: 'Lorem ipsum' };
+
+    client1.on('message', (message) => {
+      // Don't need to assert here; the other client's callback handles it
+    });
+
+    // This will be called when any one of the clients emits "sendMessage" event
+    client2.on('message', (message) => {
+      setImmediate(() => {
+        expect(message).toEqual({
+          username: testMsg.username,
+          text: testMsg.message,
+        });
+      });
+      client1.disconnect();
+      client2.disconnect();
+      done();
+    });
+
+    // Emit the "sendMessage" event from one of the clients
+    client1.emit('sendMessage', testMsg);
   });
 });

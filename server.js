@@ -19,7 +19,19 @@ io.on('connection', (socket) => {
 
   // Event "broadcast"
   socket.on('broadcast', (message) => {
-    io.emit('message', `Hello everyone: ${message}`);
+    io.emit('broadcastMessage', `Hello everyone: ${message}`);
+  });
+
+  // Event "sendMessage"
+  socket.on('sendMessage', (data) => {
+    console.log({ testData: data });
+    // Example data = {username:"",message:""}
+    // Broadcast the received message to all users in the same room
+    io.emit('message', {
+      username: data.username,
+      text: data.message,
+    });
+    console.log("io emmited")
   });
 
   // Event "disconnect"
