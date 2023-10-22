@@ -1,0 +1,27 @@
+{
+  "name": "socket-jest-demo",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/preset-env": "^7.22.20",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "http": "^0.0.1-security",
+    "jest": "^29.7.0",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2",
+    "supertest": "^6.3.3"
+  },
+  "devDependencies": {
+    "jest-environment-jsdom-sixteen": "^2.0.0"
+  }
+}
