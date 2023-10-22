@@ -96,4 +96,31 @@ describe('Socket.io Server', () => {
     // Client 1 joins the room
     client1.emit('join', { username: 'Alice', room: roomName });
   });
+
+  it('should inform other users someone has joined the room on "join" event', (done) => {
+    const client1 = require('socket.io-client')(`http://localhost:3000`);
+    const client2 = require('socket.io-client')(`http://localhost:3000`);
+    const usernameClient1 = 'Alice';
+    const usernameClient2 = 'Bob';
+
+    const roomName = 'exampleRoom';
+
+    client1.on('message', (message) => {
+      setImmediate(() => {
+        if (message.username === usernameClient2) {
+          expect(message.text).toEqual(
+            `${usernameClient2} has joined the room.`
+          );
+          client1.disconnect();
+          done();
+        }
+      });
+    });
+
+    // Client 1 joins the room
+    client1.emit('join', { username: usernameClient1, room: roomName });
+
+    // Client 2 joins the room
+    client2.emit('join', { username: usernameClient2, room: roomName });
+  });
 });
