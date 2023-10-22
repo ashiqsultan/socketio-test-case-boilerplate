@@ -22,6 +22,19 @@ io.on('connection', (socket) => {
     io.emit('broadcastMessage', `Hello everyone: ${message}`);
   });
 
+  socket.on("join", (data) => {
+    // Emit a welcome message to the user who joined
+    socket.emit("message", { text: `Welcome, ${data.username}!` });
+    
+    // Broadcast a message to all other users in the same room
+    socket.broadcast.to(data.room).emit("message", {
+        text: `${data.username} has joined the room.`
+    });
+
+    // Join the room
+    socket.join(data.room);
+});
+
   // Event "sendMessage"
   socket.on('sendMessage', (data) => {
     console.log({ testData: data });

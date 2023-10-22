@@ -79,4 +79,21 @@ describe('Socket.io Server', () => {
     // Emit the "sendMessage" event from one of the clients
     client1.emit('sendMessage', testMsg);
   });
+
+  it('should welcome a user and broadcast to the room on "join" event', (done) => {
+    const client1 = require('socket.io-client')(`http://localhost:3000`);
+    // const client2 = require('socket.io-client')(`http://localhost:3000`);
+    const roomName = 'exampleRoom';
+
+    client1.on('message', (message) => {
+      setImmediate(() => {
+        expect(message.text).toEqual(`Welcome, Alice!`);
+        client1.disconnect();
+        done();
+      });
+    });
+
+    // Client 1 joins the room
+    client1.emit('join', { username: 'Alice', room: roomName });
+  });
 });
