@@ -1,31 +1,16 @@
-import request from 'supertest';
-import express from 'express';
-import http from 'http';
-import { Server } from 'socket.io';
-import server from './server'; // Assuming server.js exports the Express app
+import server from './server.js'; // Assuming server.js exports the Express app
 
 describe('Socket.io Server', () => {
-  let httpServer;
-  let ioServer;
-
   beforeAll((done) => {
-    const app = express();
-    httpServer = http.createServer(app);
-    ioServer = new Server(httpServer);
     // Start the server
-    httpServer.listen(0, () => {
-      done();
-    });
+    server.listen(3000, done);
   });
 
-  //   afterAll((done) => {
-  //     // Close the server after all tests are done
-  //     ioServer.close(() => {
-  //       httpServer.close(() => {
-  //         done();
-  //       });
-  //     });
-  //   });
+  afterAll((done) => {
+    // Close the server after all tests are done
+    server.close();
+    done();
+  });
 
   //   it('should respond with "Hello, world!" on socket connection', (done) => {
   //     const client = require('socket.io-client')(`http://localhost:3000`);

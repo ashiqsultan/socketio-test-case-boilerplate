@@ -5,8 +5,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "test": "jest"
+    "start": "node index.js",
+    "test": "jest --forceExit"
   },
   "keywords": [],
   "author": "",
