@@ -29,10 +29,16 @@ describe('Socket.io Server', () => {
     });
 
     client2.on('broadcastMessage', (message) => {
-      expect(message).toEqual('Hello everyone: Test message');
-      client1.disconnect();
-      client2.disconnect();
-      done();
+      try {
+        expect(message).toEqual('Hello everyone: Test message');
+        client1.disconnect();
+        client2.disconnect();
+        done();
+      } catch (error) {
+        client1.disconnect();
+        client2.disconnect();
+        done(error);
+      }
     });
 
     // Emit the "broadcast" event from one of the clients
@@ -51,14 +57,20 @@ describe('Socket.io Server', () => {
     // This will be called when any one of the clients emits "sendMessage" event
     client2.on('message', (message) => {
       setImmediate(() => {
-        expect(message).toEqual({
-          username: testMsg.username,
-          text: testMsg.message,
-        });
+        try {
+          expect(message).toEqual({
+            username: testMsg.username,
+            text: testMsg.message,
+          });
+          client1.disconnect();
+          client2.disconnect();
+          done();
+        } catch (error) {
+          client1.disconnect();
+          client2.disconnect();
+          done(error);
+        }
       });
-      client1.disconnect();
-      client2.disconnect();
-      done();
     });
 
     // Emit the "sendMessage" event from one of the clients
@@ -72,9 +84,14 @@ describe('Socket.io Server', () => {
 
     client1.on('message', (message) => {
       setImmediate(() => {
-        expect(message.text).toEqual(`Welcome, Alice!`);
-        client1.disconnect();
-        done();
+        try {
+          expect(message.text).toEqual(`Welcome, Alice!`);
+          client1.disconnect();
+          done();
+        } catch (error) {
+          client1.disconnect();
+          done(error);
+        }
       });
     });
 
@@ -92,12 +109,19 @@ describe('Socket.io Server', () => {
 
     client1.on('message', (message) => {
       setImmediate(() => {
-        if (message.username === usernameClient2) {
-          expect(message.text).toEqual(
-            `${usernameClient2} has joined the room.`
-          );
+        try {
+          if (message.username === usernameClient2) {
+            expect(message.text).toEqual(
+              `${usernameClient2} has joined the room.`
+            );
+            client1.disconnect();
+            client2.disconnect();
+            done();
+          }
+        } catch (error) {
           client1.disconnect();
-          done();
+          client2.disconnect();
+          done(error);
         }
       });
     });
